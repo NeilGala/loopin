@@ -59,18 +59,28 @@ export default function FeedPage() {
 
         {/* Nav links */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => router.push(`/profile/${address}`)}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-800"
-          >
-            👤 @{username}
-          </button>
-          <button
-            onClick={disconnect}
-            className="text-xs text-gray-600 hover:text-gray-400 transition-colors px-3 py-1.5"
-          >
-            Disconnect
-          </button>
+  {/* Create post button */}
+  <button
+    onClick={() => router.push("/create")}
+    className="flex items-center gap-1.5 text-sm bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors active:scale-95"
+  >
+    <span className="text-base leading-none">+</span>
+    Post
+  </button>
+
+  <button
+    onClick={() => router.push(`/profile/${address}`)}
+    className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-800"
+  >
+    👤 @{username}
+  </button>
+
+  <button
+    onClick={disconnect}
+    className="text-xs text-gray-600 hover:text-gray-400 transition-colors px-3 py-1.5"
+  >
+    Disconnect
+  </button>
         </div>
       </nav>
 
