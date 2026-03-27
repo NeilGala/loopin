@@ -5,21 +5,19 @@ import { ethers } from "ethers";
 import { SEPOLIA_CHAIN_ID, SEPOLIA_CHAIN_ID_HEX, SEPOLIA_NETWORK_CONFIG } from "@/lib/constants";
 
 export function useWallet() {
-  const [address,  setAddress]  = useState(null);
-  const [provider, setProvider] = useState(null);
-  const [signer,   setSigner]   = useState(null);
-  const [chainId,  setChainId]  = useState(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [error,    setError]    = useState(null);
+  const [address,       setAddress]       = useState(null);
+  const [provider,      setProvider]      = useState(null);
+  const [signer,        setSigner]        = useState(null);
+  const [chainId,       setChainId]       = useState(null);
+  const [isConnecting,  setIsConnecting]  = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false); // ← NEW
+  const [error,         setError]         = useState(null);
 
-  // ── Is MetaMask installed? ──────────────────────────────────────
   const isMetaMaskInstalled = () =>
     typeof window !== "undefined" && Boolean(window.ethereum?.isMetaMask);
 
-  // ── Is the wallet on Sepolia? ───────────────────────────────────
   const isOnSepolia = chainId === SEPOLIA_CHAIN_ID;
 
-  // ── Switch to Sepolia automatically ────────────────────────────
   const switchToSepolia = useCallback(async () => {
     if (!window.ethereum) return;
     try {
@@ -28,7 +26,6 @@ export function useWallet() {
         params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
       });
     } catch (switchError) {
-      // Chain not added yet — add it
       if (switchError.code === 4902) {
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
@@ -40,23 +37,17 @@ export function useWallet() {
     }
   }, []);
 
-  // ── Connect wallet ──────────────────────────────────────────────
   const connect = useCallback(async () => {
     setError(null);
-
     if (!isMetaMaskInstalled()) {
       setError("MetaMask is not installed. Please install it from metamask.io");
       return;
     }
-
     setIsConnecting(true);
-
     try {
-      // Request account access
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
-
       const web3Provider = new ethers.BrowserProvider(window.ethereum);
       const web3Signer   = await web3Provider.getSigner();
       const network      = await web3Provider.getNetwork();
@@ -67,11 +58,9 @@ export function useWallet() {
       setAddress(accounts[0]);
       setChainId(currentChainId);
 
-      // Auto-switch to Sepolia if on wrong network
       if (currentChainId !== SEPOLIA_CHAIN_ID) {
         await switchToSepolia();
       }
-
     } catch (err) {
       if (err.code === 4001) {
         setError("Connection rejected. Please approve the MetaMask request.");
@@ -83,7 +72,6 @@ export function useWallet() {
     }
   }, [switchToSepolia]);
 
-  // ── Disconnect ──────────────────────────────────────────────────
   const disconnect = useCallback(() => {
     setAddress(null);
     setProvider(null);
@@ -92,9 +80,14 @@ export function useWallet() {
     setError(null);
   }, []);
 
-  // ── Listen for account / chain changes ─────────────────────────
+  // ── On mount: check if MetaMask already has an active session ────
+  // This is what was missing — isInitialized stays false until this
+  // async check completes, preventing premature routing decisions.
   useEffect(() => {
-    if (!isMetaMaskInstalled()) return;
+    if (!isMetaMaskInstalled()) {
+      setIsInitialized(true); // no MetaMask = initialized (just not connected)
+      return;
+    }
 
     const handleAccountsChanged = (accounts) => {
       if (accounts.length === 0) {
@@ -106,14 +99,13 @@ export function useWallet() {
 
     const handleChainChanged = (chainIdHex) => {
       setChainId(parseInt(chainIdHex, 16));
-      // Reload to reset provider state cleanly
       window.location.reload();
     };
 
     window.ethereum.on("accountsChanged", handleAccountsChanged);
     window.ethereum.on("chainChanged",    handleChainChanged);
 
-    // Check if already connected (returning user)
+    // Check for existing connection — THEN mark as initialized
     window.ethereum
       .request({ method: "eth_accounts" })
       .then(async (accounts) => {
@@ -127,7 +119,10 @@ export function useWallet() {
           setChainId(Number(network.chainId));
         }
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        setIsInitialized(true); // ← always fires, connected or not
+      });
 
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
@@ -141,6 +136,7 @@ export function useWallet() {
     signer,
     chainId,
     isConnecting,
+    isInitialized,  // ← exported so pages can wait for it
     isConnected:  Boolean(address),
     isOnSepolia,
     error,
