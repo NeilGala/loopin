@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Font import ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-950 text-white font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar for a polished Web3 feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-brand-600 rounded-full;
+  }
+}
+
+@layer components {
+  /* Reusable button styles */
+  .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-700 text-white font-semibold 
+           px-6 py-3 rounded-xl transition-all duration-200 
+           disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 text-white font-semibold 
+           px-6 py-3 rounded-xl transition-all duration-200
+           border border-gray-700 hover:border-gray-600
+           active:scale-95;
+  }
+
+  /* Glass card — used throughout the app */
+  .card {
+    @apply bg-gray-900 border border-gray-800 rounded-2xl p-6;
+  }
+
+  /* Input field base style */
+  .input {
+    @apply bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 
+           text-white placeholder-gray-500 w-full
+           focus:outline-none focus:border-brand-500 
+           transition-colors duration-200;
+  }
+}

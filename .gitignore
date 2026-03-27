@@ -4,3 +4,8 @@ node_modules/
 .next/
 artifacts/
 cache/
+
+# Frontend secrets
+frontend/.env.local
+frontend/.next/
+frontend/node_modules/
