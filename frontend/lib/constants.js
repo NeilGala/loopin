@@ -28,3 +28,27 @@ export function ipfsToUrl(hash) {
 // ─── App Config ───────────────────────────────────────────────────
 export const APP_NAME    = "Loopin";
 export const APP_TAGLINE = "Your world. On-chain.";
+
+// ─── Time formatting ──────────────────────────────────────────────
+export function timeAgo(timestamp) {
+  const seconds = Math.floor(Date.now() / 1000 - Number(timestamp));
+  if (seconds < 60)    return "just now";
+  if (seconds < 3600)  return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  // Older than a week — show the date
+  return new Date(Number(timestamp) * 1000).toLocaleDateString("en-US", {
+    month: "short",
+    day:   "numeric",
+  });
+}
+
+// ─── Address formatting ───────────────────────────────────────────
+export function shortAddress(addr) {
+  if (!addr) return "";
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+}
+
+// ─── Feed config ──────────────────────────────────────────────────
+export const FEED_PAGE_SIZE    = 12;   // posts per page
+export const FETCH_BATCH_SIZE  = 10;   // parallel contract reads per batch

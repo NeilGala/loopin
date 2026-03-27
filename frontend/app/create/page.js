@@ -47,14 +47,14 @@ export default function CreatePage() {
 
       {/* Top navigation bar */}
       <nav className="sticky top-0 z-10 bg-gray-950/80 backdrop-blur-sm border-b border-gray-800 px-4 py-3 flex items-center gap-3">
-        <button
-          onClick={() => router.back()}
-          className="text-gray-400 hover:text-white transition-colors p-1 text-sm"
-        >
-          ← Back
-        </button>
-        <span className="text-white font-bold">New Post</span>
-      </nav>
+  <button
+    onClick={() => router.back()}
+    className="text-gray-400 hover:text-white transition-colors p-1 text-sm"
+  >
+    ← Back
+  </button>
+  <span className="text-white font-bold">New Post</span>
+</nav>
 
       {/* Content */}
       <div className="max-w-lg mx-auto px-4 py-8 pb-24">
