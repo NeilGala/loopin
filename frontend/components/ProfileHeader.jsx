@@ -2,6 +2,9 @@
 
 import { ipfsToUrl } from "@/lib/constants";
 import FollowButton from "@/components/FollowButton";
+import { useRouter } from "next/navigation";
+
+
 
 // Generates a deterministic gradient avatar from a wallet address
 function GradientAvatar({ address, size = 80 }) {
@@ -52,6 +55,7 @@ export default function ProfileHeader({
   isOwnProfile,
   onEditProfile,
 }) {
+  const router = useRouter();
   if (!profile) return null;
 
   const avatarUrl = profile.avatar ? ipfsToUrl(profile.avatar) : null;
@@ -125,16 +129,24 @@ export default function ProfileHeader({
 
       {/* Action */}
       {isOwnProfile ? (
-        <button onClick={onEditProfile} className="btn-secondary w-full">
-          ✏️ Edit Profile
-        </button>
-      ) : (
-        <FollowButton
-          targetAddress={profile.address}
-          currentAddress={currentAddress}
-          signer={signer}
-        />
-      )}
+  <button onClick={onEditProfile} className="btn-secondary w-full">
+    ✏️ Edit Profile
+  </button>
+) : (
+  <div className="flex flex-col gap-2">
+    <FollowButton
+      targetAddress={profile.address}
+      currentAddress={currentAddress}
+      signer={signer}
+    />
+    <button
+      onClick={() => router.push(`/messages/${profile.address}`)}
+      className="btn-secondary w-full text-sm"
+    >
+      💬 Message
+    </button>
+  </div>
+)}
 
       {/* ✅ FIXED LINK */}
       <a

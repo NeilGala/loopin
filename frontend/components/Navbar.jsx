@@ -29,30 +29,27 @@ export default function Navbar({ username, address, onDisconnect }) {
         <span className="font-black text-white hidden sm:block">Loopin</span>
       </button>
 
-      {/* Center nav links */}
+      {/* Center nav */}
       <div className="flex items-center gap-1">
 
-        {/* Feed */}
-        <button
-          onClick={() => router.push("/feed")}
-          className={navBtn("/feed")}
-          title="Feed"
-        >
+        <button onClick={() => router.push("/feed")}
+          className={navBtn("/feed")} title="Feed">
           <span className="text-base leading-none">🏠</span>
           <span className="hidden sm:block">Feed</span>
         </button>
 
-        {/* Search */}
-        <button
-          onClick={() => router.push("/search")}
-          className={navBtn("/search")}
-          title="Search"
-        >
+        <button onClick={() => router.push("/search")}
+          className={navBtn("/search")} title="Search">
           <span className="text-base leading-none">🔍</span>
           <span className="hidden sm:block">Search</span>
         </button>
 
-        {/* Create post */}
+        <button onClick={() => router.push("/messages")}
+          className={navBtn("/messages")} title="Messages">
+          <span className="text-base leading-none">💬</span>
+          <span className="hidden sm:block">Messages</span>
+        </button>
+
         <button
           onClick={() => router.push("/create")}
           className="flex items-center gap-1.5 text-sm bg-brand-600
@@ -66,25 +63,19 @@ export default function Navbar({ username, address, onDisconnect }) {
 
       </div>
 
-      {/* Right: profile + disconnect */}
+      {/* Right */}
       <div className="flex items-center gap-1">
-        <button
-          onClick={() => router.push(`/profile/${address}`)}
-          className={navBtn(`/profile/${address}`)}
-          title="My Profile"
-        >
+        <button onClick={() => router.push(`/profile/${address}`)}
+          className={navBtn(`/profile/${address}`)} title="My Profile">
           <span className="text-base leading-none">👤</span>
           <span className="hidden sm:block max-w-[72px] truncate">
             @{username}
           </span>
         </button>
 
-        <button
-          onClick={onDisconnect}
-          title="Disconnect"
+        <button onClick={onDisconnect} title="Disconnect"
           className="text-gray-600 hover:text-gray-400 transition-colors
-                     p-1.5 rounded-lg hover:bg-gray-800"
-        >
+                     p-1.5 rounded-lg hover:bg-gray-800">
           ⏻
         </button>
       </div>
