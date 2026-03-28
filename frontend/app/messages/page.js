@@ -36,21 +36,27 @@ export default function MessagesPage() {
 
   // ── Resolve usernames for each conversation partner ────────────
   useEffect(() => {
-    if (!conversations.length) return;
+  if (!conversations.length) return;
 
-    async function resolveUsernames() {
-      const map = { ...usernameMap };
-      await Promise.all(
-        conversations.map(async ({ otherId }) => {
-          if (map[otherId]) return;
-          const name = await getUsername(otherId);
-          if (name) map[otherId] = name;
-        })
-      );
-      setUsernameMap(map);
-    }
+  async function resolveUsernames() {
+    // Use functional updater to avoid stale closure on usernameMap
+    setUsernameMap((prev) => {
+      const pending = conversations.filter(({ otherId }) => !prev[otherId]);
+      if (pending.length === 0) return prev;
 
-    resolveUsernames();
+      // Fire async lookups outside the setter — update state when each resolves
+      pending.forEach(async ({ otherId }) => {
+        const name = await getUsername(otherId);
+        if (name) {
+          setUsernameMap((latest) => ({ ...latest, [otherId]: name }));
+        }
+      });
+
+      return prev; // return unchanged for now — updates come via forEach above
+    });
+  }
+
+  resolveUsernames();
   }, [conversations, getUsername]);
 
   if (!isInitialized || !authReady) {
